@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Ajouter un produit</h1>
+
+    {# Ouverture du formulaire #}
+    {{ form_start(form) }}
+        
+        {# Affiche les champs de ton entité (Titre et Prix) #}
+        {{ form_widget(form) }}
+        
+        {# Le bouton de soumission est nécessaire pour envoyer les données #}
+        <button type="submit" style="margin-top: 15px;">Enregistrer le produit</button>
+        
+    {# Fermeture du formulaire (gère automatiquement le jeton CSRF caché) #}
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_produit') }}">Retour à la liste</a>
+{% endblock %}

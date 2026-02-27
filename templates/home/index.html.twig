@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+
+    <h1>Liste des produits</h1>
+
+<a href="{{ path('produit_nouveau') }}">Ajouter un produit</a>
+
+<ul>
+    {% for produit in produits %}
+        <li>
+            {{ produit.titre }} - {{ produit.prix }} €
+            
+            {# Formulaire de suppression sécurisé en POST #}
+            <form action="{{ path('produit_supprimer', {'id': produit.id}) }}" 
+                  method="post" 
+                  style="display: inline-block;" 
+                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
+                
+                {# Ajout du jeton de sécurité CSRF pour éviter les attaques #}
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+                
+                <button type="submit" style="cursor: pointer; color: red;">Supprimer</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
