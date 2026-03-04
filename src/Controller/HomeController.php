@@ -9,7 +9,13 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class HomeController extends AbstractController
 {
-    #[Route('/home', name: 'app_home')]
+    #[Route('/', name: 'app_home')]
+    public function home(): Response
+    {
+        return $this->redirectToRoute('app_login');
+    }
+
+    #[Route('/home', name: 'app_homepage')]
     public function index(ProduitRepository $produitRepository): Response
     {
         $produits = $produitRepository->findAll();
