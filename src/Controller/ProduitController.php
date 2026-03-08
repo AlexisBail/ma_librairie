@@ -32,6 +32,9 @@ final class ProduitController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // L'utilisateur connecté devient le propriétaire
+            $produit->setUser($this->getUser());
+            
             $em->persist($produit);
             $em->flush();
 
@@ -47,6 +50,9 @@ final class ProduitController extends AbstractController
     #[Route('/supprimer/{id}', name: 'produit_supprimer', methods: ['POST'])]
     public function supprimer(Produit $produit, EntityManagerInterface $em, Request $request): Response
     {
+        // MODIFICATION ICI : On demande au ProduitVoter si l'utilisateur a le droit
+        $this->denyAccessUnlessGranted('PRODUIT_DELETE', $produit);
+
         // On vérifie le jeton CSRF pour la sécurité
         if ($this->isCsrfTokenValid('delete'.$produit->getId(), $request->getPayload()->getString('_token'))) {
             $em->remove($produit);

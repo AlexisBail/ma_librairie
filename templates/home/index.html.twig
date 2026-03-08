@@ -1,33 +1,55 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Liste des produits{% endblock %}
 
 {% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="fw-bold text-white">📚 Notre Collection</h1>
+        <a href="{{ path('produit_nouveau') }}" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus"></i> + Ajouter un produit
+        </a>
+    </div>
 
-    <a href="{{ path('app_logout') }}" class="btn btn-danger">Se déconnecter</a>
-
-    <h1>Liste des produits</h1>
-
-<a href="{{ path('produit_nouveau') }}">Ajouter un produit</a>
-
-<ul>
-    {% for produit in produits %}
-        <li>
-            {{ produit.titre }} - {{ produit.prix }} €
-            
-            {# Formulaire de suppression sécurisé en POST #}
-            <form action="{{ path('produit_supprimer', {'id': produit.id}) }}" 
-                  method="post" 
-                  style="display: inline-block;" 
-                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
-                
-                {# Ajout du jeton de sécurité CSRF pour éviter les attaques #}
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
-                
-                <button type="submit" style="cursor: pointer; color: red;">Supprimer</button>
-            </form>
-        </li>
-    {% endfor %}
-</ul>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for produit in produits %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-secondary bg-dark text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title fw-bold mb-0">{{ produit.titre }}</h5>
+                            <span class="badge bg-info text-dark">{{ produit.prix }} €</span>
+                        </div>
+                        <p class="card-text text-secondary small">
+                            Géré via votre espace librairie sécurisé.
+                        </p>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-secondary d-flex justify-content-end">
+                        {# TA LOGIQUE DE VOTER CONSERVÉE #}
+                        {% if is_granted('PRODUIT_DELETE', produit) %}
+                            <form action="{{ path('produit_supprimer', {'id': produit.id}) }}" 
+                                  method="post" 
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
+                                
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+                                
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    🗑️ Supprimer
+                                </button>
+                            </form>
+                        {% else %}
+                             <span class="badge bg-secondary opacity-50 small">Lecture seule</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-dark border-secondary text-secondary">
+                    Aucun produit trouvé dans la base de données.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
 {% endblock %}

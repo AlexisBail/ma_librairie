@@ -9,10 +9,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class HomeController extends AbstractController
 {
-    #[Route('/', name: 'app_home')]
+    #[Route('/', name: 'app_home')] // C'est cette route que le Dashboard appelle
     public function home(): Response
     {
-        return $this->redirectToRoute('app_login');
+        // Si l'utilisateur tape juste l'URL de base, on l'envoie sur la page des produits
+        return $this->redirectToRoute('app_homepage');
     }
 
     #[Route('/home', name: 'app_homepage')]
