@@ -5,9 +5,13 @@
 {% block body %}
     <div class="d-flex justify-content-between align-items-center mb-5">
         <h1 class="fw-bold text-white">📚 Notre Collection</h1>
-        <a href="{{ path('produit_nouveau') }}" class="btn btn-primary shadow-sm">
-            <i class="fas fa-plus"></i> + Ajouter un produit
-        </a>
+        
+        {# On affiche le bouton seulement si l'utilisateur est connecté #}
+        {% if app.user %}
+            <a href="{{ path('produit_nouveau') }}" class="btn btn-primary shadow-sm">
+                <i class="fas fa-plus"></i> + Ajouter un produit
+            </a>
+        {% endif %}
     </div>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">

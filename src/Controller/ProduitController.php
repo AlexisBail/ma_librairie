@@ -10,11 +10,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted; // L'import indispensable
 
 #[Route('/produit')]
 final class ProduitController extends AbstractController
 {
-    // 1. Liste des produits
+    // 1. Liste des produits (Accessible à TOUS)
     #[Route('/', name: 'app_produit', methods: ['GET'])]
     public function index(ProduitRepository $produitRepository): Response
     {
@@ -23,8 +24,9 @@ final class ProduitController extends AbstractController
         ]);
     }
 
-    // 2. Ajout d'un produit
+    // 2. Ajout d'un produit (RÉSERVÉ AUX CONNECTÉS)
     #[Route('/nouveau', name: 'produit_nouveau', methods: ['GET','POST'])]
+    #[IsGranted('ROLE_USER')] // Bloque l'accès si pas de compte connecté
     public function nouveau(Request $request, EntityManagerInterface $em): Response
     {
         $produit = new Produit();
@@ -46,11 +48,12 @@ final class ProduitController extends AbstractController
         ]);
     }
 
-    // 3. Suppression d'un produit
+    // 3. Suppression d'un produit (RÉSERVÉ AUX CONNECTÉS + VOTER)
     #[Route('/supprimer/{id}', name: 'produit_supprimer', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')] // Sécurité supplémentaire de base
     public function supprimer(Produit $produit, EntityManagerInterface $em, Request $request): Response
     {
-        // MODIFICATION ICI : On demande au ProduitVoter si l'utilisateur a le droit
+        // On demande au ProduitVoter si l'utilisateur a le droit
         $this->denyAccessUnlessGranted('PRODUIT_DELETE', $produit);
 
         // On vérifie le jeton CSRF pour la sécurité
